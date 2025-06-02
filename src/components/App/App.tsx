@@ -9,7 +9,7 @@ import { useState } from "react";
 function App() {
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError, isPending, isSuccess } = useQuery({
+  const { data } = useQuery({
     queryKey: ["notes", page],
     queryFn: () => fetchNotes(page),
     placeholderData: keepPreviousData,
