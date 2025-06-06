@@ -1,13 +1,51 @@
 import css from "./App.module.css";
-import { fetchNotes } from "../../services/noteService";
+import { fetchNotes, deleteNote, createNote } from "../../services/noteService";
 import NoteList from "../NoteList/NoteList";
 import SearchBox from "../SearchBox/SearchBox";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import Pagination from "../Pagination/Pagination";
 import { useState } from "react";
+import NoteModal from "../NoteModal/NoteModal";
+import NoteForm from "../NoteForm/NoteForm";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Note } from "../../types/note";
 
 function App() {
   const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const queryClient = useQueryClient();
+
+  const deleteTodo = useMutation({
+    mutationFn: async (id: number) => deleteNote(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+
+  const handleDeleteTodo = (id: number) => {
+    deleteTodo.mutate(id);
+  };
+
+  const createTodo = useMutation({
+    mutationFn: async (note: Note) =>
+      createNote(note.title, note.content, note.tag),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      closeModal();
+    },
+  });
+
+  const handleCreateTodo = (note: Note) => {
+    createTodo.mutate({
+      title: note.title,
+      content: note.content,
+      tag: note.tag,
+    });
+  };
 
   const { data } = useQuery({
     queryKey: ["notes", page],
@@ -23,9 +61,20 @@ function App() {
       <header className={css.toolbar}>
         {<SearchBox />}
         {<Pagination page={page} setPage={setPage} totalPages={totalPages} />}
-        {<button className={css.button}>Create note +</button>}
+        {
+          <button className={css.button} onClick={openModal}>
+            Create note +
+          </button>
+        }
       </header>
-      {notes && notes.length > 0 && <NoteList notes={notes} />}
+      {isModalOpen && (
+        <NoteModal onClose={closeModal}>
+          <NoteForm onClose={closeModal} onCreate={handleCreateTodo} />
+        </NoteModal>
+      )}
+      {notes && notes.length > 0 && (
+        <NoteList notes={notes} onDelete={handleDeleteTodo} />
+      )}
     </div>
   );
 }

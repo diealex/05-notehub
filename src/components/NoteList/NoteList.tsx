@@ -2,20 +2,26 @@ import css from "./NoteList.module.css";
 import type { Note } from "../../types/note.ts";
 
 interface NoteListProps {
-  onSelect?: (note: Note) => void;
+  onDelete: (id: number) => void;
   notes: Note[];
 }
 
-export default function NoteList({ notes }: NoteListProps) {
+export default function NoteList({ notes, onDelete }: NoteListProps) {
+  function onclickHandle(id: number) {
+    onDelete(id);
+  }
+
   return (
     <ul className={css.list}>
-      {notes.map((note: Note) => (
-        <li className={css.listItem} key={note.id}>
-          <h2 className={css.title}>{note.title}</h2>
-          <p className={css.content}>{note.content}</p>
+      {notes.map(({ id, title, content, tag }: Note) => (
+        <li className={css.listItem} key={id}>
+          <h2 className={css.title}>{title}</h2>
+          <p className={css.content}>{content}</p>
           <div className={css.footer}>
-            <span className={css.tag}>{note.tag}</span>
-            <button className={css.button}>Delete</button>
+            <span className={css.tag}>{tag}</span>
+            <button className={css.button} onClick={() => onclickHandle(id!)}>
+              Delete
+            </button>
           </div>
         </li>
       ))}

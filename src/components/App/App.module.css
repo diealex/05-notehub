@@ -15,7 +15,8 @@
   position: sticky;
   top: 0;
   padding: 16px 16px;
-  background-color: #f8f9fa85;
+  /* background-color: rgba(173, 191, 250, 0.522); */
+  background: linear-gradient(180deg, #ced4da85, #000c8c00);
   box-shadow: 0 2px 1px 0 rgba(46, 47, 66, 0.08),
     0 1px 1px 0 rgba(46, 47, 66, 0.16), 0 1px 6px 0 rgba(46, 47, 66, 0.08);
 }
