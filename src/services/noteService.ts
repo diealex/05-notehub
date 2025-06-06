@@ -7,13 +7,17 @@ interface NotesHttpResponse {
   totalPages: number;
 }
 
-export const fetchNotes = async (page: number): Promise<NotesHttpResponse> => {
+export const fetchNotes = async (
+  page: number,
+  mysearchtext?: string
+): Promise<NotesHttpResponse> => {
   const results = await axios.get<NotesHttpResponse>(
     `https://notehub-public.goit.study/api/notes`,
     {
       params: {
         page,
         perPage: 20,
+        search: mysearchtext ? mysearchtext : null,
       },
       headers: {
         Authorization: `Bearer ${ACCESS_TOKEN}`,

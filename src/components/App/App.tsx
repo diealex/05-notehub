@@ -4,11 +4,12 @@ import NoteList from "../NoteList/NoteList";
 import SearchBox from "../SearchBox/SearchBox";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import Pagination from "../Pagination/Pagination";
-import { useState } from "react";
 import NoteModal from "../NoteModal/NoteModal";
 import NoteForm from "../NoteForm/NoteForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Note } from "../../types/note";
+import { useState } from "react";
+import { useDebounce } from "use-debounce";
 
 function App() {
   const [page, setPage] = useState(1);
@@ -47,9 +48,12 @@ function App() {
     });
   };
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 700);
+
   const { data } = useQuery({
-    queryKey: ["notes", page],
-    queryFn: () => fetchNotes(page),
+    queryKey: ["notes", page, debouncedSearchQuery],
+    queryFn: () => fetchNotes(page, debouncedSearchQuery),
     placeholderData: keepPreviousData,
   });
 
@@ -59,7 +63,7 @@ function App() {
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        {<SearchBox />}
+        {<SearchBox inputOnChange={setSearchQuery} />}
         {<Pagination page={page} setPage={setPage} totalPages={totalPages} />}
         {
           <button className={css.button} onClick={openModal}>
