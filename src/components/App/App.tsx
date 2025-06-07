@@ -66,7 +66,7 @@ function App() {
     <div className={css.app}>
       <header className={css.toolbar}>
         {<SearchBox inputOnChange={setSearchQuery} />}
-        {<Pagination page={page} setPage={setPage} totalPages={totalPages} />}
+        {<Pagination setPage={setPage} totalPages={totalPages} />}
         {
           <button className={css.button} onClick={openModal}>
             Create note +
