@@ -10,6 +10,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Note } from "../../types/note";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import Loader from "../Loader/Loader";
 
 function App() {
   const [page, setPage] = useState(1);
@@ -51,7 +53,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery] = useDebounce(searchQuery, 700);
 
-  const { data } = useQuery({
+  const { data, isLoading, isError, isPending } = useQuery({
     queryKey: ["notes", page, debouncedSearchQuery],
     queryFn: () => fetchNotes(page, debouncedSearchQuery),
     placeholderData: keepPreviousData,
@@ -71,11 +73,17 @@ function App() {
           </button>
         }
       </header>
+      {createTodo.isPending && <Loader />}
+      {createTodo.isError && <ErrorMessage />}
+      {deleteTodo.isPending && <Loader />}
+      {deleteTodo.isError && <ErrorMessage />}
       {isModalOpen && (
         <NoteModal onClose={closeModal}>
           <NoteForm onClose={closeModal} onCreate={handleCreateTodo} />
         </NoteModal>
       )}
+      {isError && <ErrorMessage />}
+      {isLoading && isPending && <Loader />}
       {notes && notes.length > 0 && (
         <NoteList notes={notes} onDelete={handleDeleteTodo} />
       )}
