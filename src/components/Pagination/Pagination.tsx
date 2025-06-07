@@ -21,12 +21,13 @@ export default function Pagination({
       pageCount={totalPages ?? 0}
       pageRangeDisplayed={5}
       marginPagesDisplayed={1}
-      forcePage={page - 1}
+      // forcePage={page - 1}
       onPageChange={handlePageClick}
       containerClassName={css.pagination}
       activeClassName={css.active}
       nextLabel="→"
       previousLabel="←"
+      renderOnZeroPageCount={null}
     />
   );
 }
